@@ -14,6 +14,62 @@ function postEvents(duration, auth) {
   var event = {
     'summary': 'Room In Use',
     'location': conferenceRoomName,
+    'description': 'This room is in use.',
+    'start': {
+      'dateTime': now.format(),
+    },
+    'end': {
+      'dateTime': now.clone().add(duration, 'minutes').format(),
+    },
+    'reminders': {
+      'useDefault': false,
+      'overrides': []
+    },
+  };
+
+  calendar.events.insert({
+    auth: auth,
+    calendarId: 'primary',
+    resource: event,
+  }, function(err, eventRsp) {
+    if (err) {
+      console.log('There was an error contacting the Calendar service: ' + err);
+      return;
+    }
+    console.log('Event created: %s', eventRsp.id);
+
+    // move to updateEvents function
+    var event2 = eventRsp
+    event2.end.dateTime = now.format()
+
+    console.log(event2)
+
+    calendar.events.update({
+      auth: auth,
+      calendarId: 'primary',
+      resource: event2,
+      eventId: event2.id
+    }, function(err, eventRsp) {
+      if (err) {
+        console.log('There was an error contacting the Calendar service: ' + err);
+        return;
+      }
+    });
+
+  });
+}
+
+function updateEvents(duration, auth) {
+  // Refer to the Node.js quickstart on how to setup the environment:
+  // https://developers.google.com/google-apps/calendar/quickstart/node
+  // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
+  // stored credentials.
+  var calendar = google.calendar('v3');
+  var conferenceRoomName = 'Test Room';
+  const now = moment()
+  var event = {
+    'summary': 'Room In Use',
+    'location': conferenceRoomName,
     'description': 'This rooms is in use',
     'start': {
       'dateTime': now.format(),
@@ -24,14 +80,8 @@ function postEvents(duration, auth) {
     'reminders': {
       'useDefault': false,
       'overrides': []
-      //   {'method': 'email', 'minutes': 24 * 60},
-      //   {'method': 'popup', 'minutes': 10},
-      // ],
     },
   };
-  // console.log(event)
-
-  // return
 
   calendar.events.insert({
     auth: auth,
