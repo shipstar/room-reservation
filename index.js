@@ -67,22 +67,15 @@ spark.on('login', () => {
   })
 })
 
-// spark.on('login', function() {
-//   spark.getEventStream(false, 'mine', function(data) {
-//     console.log("Event: ", JSON.stringify(data))
-//   })
+// spark.login({ accessToken: process.env.SPARK_TOKEN })
+
+
+startEvent('primary', { duration: DEFAULT_DURATION })
+// .then((eventId) => {
+//   rooms[event.coreid] = {
+//     occupied: true,
+//     eventId
+//   }
+// }).catch((err) => {
+//   console.warn(err)
 // })
-
-spark.login({ accessToken: process.env.SPARK_TOKEN })
-
-
-startEvent('primary', { duration: DEFAULT_DURATION }).then((eventId) => {
-  console.warn('yo! resolved', eventId)
-  console.warn('event', event)
-  rooms[event.coreid] = {
-    occupied: true,
-    eventId
-  }
-}).catch((err) => {
-  console.warn(err)
-})

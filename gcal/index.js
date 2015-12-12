@@ -1,39 +1,37 @@
 import google from 'googleapis'
 import loadSecret from './authorize'
+import moment from 'moment'
+import _ from 'lodash'
 
-function postEvents(auth) {
+function postEvents(duration, auth) {
   // Refer to the Node.js quickstart on how to setup the environment:
   // https://developers.google.com/google-apps/calendar/quickstart/node
   // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
   // stored credentials.
   var calendar = google.calendar('v3');
+  var conferenceRoomName = 'Test Room';
+  const now = moment()
   var event = {
-    'summary': 'Google I/O 2015',
-    'location': '800 Howard St., San Francisco, CA 94103',
-    'description': 'A chance to hear more about Google\'s developer products.',
+    'summary': 'Room In Use',
+    'location': conferenceRoomName,
+    'description': 'This rooms is in use',
     'start': {
-      'dateTime': '2015-12-15T09:00:00-07:00',
-      'timeZone': 'America/Los_Angeles',
+      'dateTime': now.format(),
     },
     'end': {
-      'dateTime': '2015-12-15T17:00:00-07:00',
-      'timeZone': 'America/Los_Angeles',
+      'dateTime': now.add(duration, 'minutes').format(),
     },
-    'recurrence': [
-      'RRULE:FREQ=DAILY;COUNT=2'
-    ],
-    'attendees': [
-      {'email': 'lpage@example.com'},
-      {'email': 'sbrin@example.com'},
-    ],
     'reminders': {
       'useDefault': false,
-      'overrides': [
-        {'method': 'email', 'minutes': 24 * 60},
-        {'method': 'popup', 'minutes': 10},
-      ],
+      'overrides': []
+      //   {'method': 'email', 'minutes': 24 * 60},
+      //   {'method': 'popup', 'minutes': 10},
+      // ],
     },
   };
+  // console.log(event)
+
+  // return
 
   calendar.events.insert({
     auth: auth,
@@ -45,6 +43,7 @@ function postEvents(auth) {
       return;
     }
     console.log('Event created: %s', event.htmlLink);
+    console.log(Object.keys(event))
   });
 }
 
@@ -52,10 +51,11 @@ function startEvent(googleCalendarId, { duration }) {
   console.log('starting event for ', googleCalendarId, duration)
 
   return new Promise((resolve, reject) => {
-    // const resp = loadSecret(postEvents)
+    const resp = loadSecret(_.partial(postEvents, duration))
+    console.log(resp)
     // resolve(resp)
-    console.warn('resolving')
-    resolve('12345')
+    // console.warn('resolving')
+    // resolve('12345')
   })
 }
 
