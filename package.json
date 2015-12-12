@@ -1,0 +1,12 @@
+{
+  "name": "room-reservation",
+  "version": "0.0.1",
+  "description": "Reserve conference rooms on Google Calendar using a Spark Core.",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Kyle Shipley, Brian Murphy, and Wes Winham",
+  "license": "ISC",
+  "dependencies": {
+    "spark": "^1.0.0"
+  }
+}
