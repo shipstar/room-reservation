@@ -12,7 +12,62 @@ long lastToggleTime = 0;           // the last time the output pin was toggled
 long debounce = 200;  // the debounce time, increase if the output flickers
 long ledDuration = 2000;  // duration LED should stay lit after press
 
+/* Peizo buzzer notes */
+#define  NOTE_c     261
+#define  NOTE_d     294
+#define  NOTE_e     329
+#define  NOTE_f     349
+#define  NOTE_g     392
+#define  NOTE_a     440
+#define  NOTE_b     493
+#define  NOTE_C     523
+// Define a special note, 'R', to represent a rest
+#define  NOTE_R     0
+
 int speakerOut = A0;
+// MELODY and TIMING
+//  melody[] is an array of notes, accompanied by beats[],
+//  which sets each note's relative length (higher #, longer note)
+int melody[] = {
+    NOTE_C,
+    NOTE_b,
+    NOTE_g,
+    NOTE_C,
+    NOTE_b,
+    NOTE_e,
+    NOTE_R,
+    NOTE_C,
+    NOTE_c,
+    NOTE_g,
+    NOTE_a,
+    NOTE_C
+};
+int melodyLength = 12;
+int beats[]  = { 16, 16, 16, 8, 8, 16, 32, 16, 16, 16, 8, 8 };
+long tempo = 10;  // ms per "beat"
+// Final countdown
+int melodyFinalCountdown[] = {
+    NOTE_C,
+    NOTE_b,
+    NOTE_g,
+    NOTE_C,
+    NOTE_b,
+    NOTE_e,
+    NOTE_R,
+    NOTE_C,
+    NOTE_c,
+    NOTE_g,
+    NOTE_a,
+    NOTE_C
+};
+int melodyFinalCountdownLength = 12;
+int beatsFinalCountdown[]  = { 16, 16, 16, 8, 8, 16, 32, 16, 16, 16, 8, 8 };
+long tempoFinalCountdown = 10;  // ms per "beat"
+// Initialize core variables
+int currentNote = 0;
+int currentNoteBeatsTarget = 0;
+long currentNoteDurationTarget  = 0;
+
 void setup() {
     pinMode(buttonInput, INPUT);
     pinMode(buttonPressLED, OUTPUT);
@@ -57,4 +112,22 @@ void handleButtonPress() {
         roomOccupied = 1;
     }
 
+    playMelody();
+}
+
+void playMelody() {
+    for (int i=0; i < melodyLength - 1; i++) {
+        currentNote = melody[i];
+        currentNoteBeatsTarget = beats[i];
+
+        currentNoteDurationTarget = currentNoteBeatsTarget * tempo; // Set up timing
+
+        if (currentNote > 0) { // if this isn't a Rest beat, while the tone has
+            tone(speakerOut, currentNote, currentNoteDurationTarget);
+        }
+        delay(currentNoteDurationTarget);
+
+        // A pause between notes...
+        delay(tempo/10);
+    }
 }
