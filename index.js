@@ -1,4 +1,5 @@
 import spark from 'spark'
+import gcal from './gcal'
 
 spark.on('login', () => {
   spark.getEventStream(false, 'mine', (data) => {
@@ -13,3 +14,5 @@ spark.on('login', () => {
 // })
 
 spark.login({ accessToken: process.env.SPARK_TOKEN })
+
+gcal()
