@@ -1,4 +1,4 @@
-var spark = require('spark')
+import spark from 'spark'
 
 spark.on('login', () => {
   spark.getEventStream(false, 'mine', (data) => {
