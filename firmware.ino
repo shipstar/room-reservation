@@ -1,10 +1,10 @@
 /* Pins configuration */
-int inPin = D3;  // button
+int buttonInput = D3;  // button
 int buttonPressLED = D7; // led
 int roomStatusLED = D6; // led
 
 /* Button and led logics */
-bool roomOccupied = FALSE;
+int roomOccupied = 0;
 int buttonPressLEDState = HIGH;     // current state of the output pin
 int currentButtonReading;          // current reading from the input pin
 int previousButtonReading = LOW;   // previous reading from the input pin
@@ -37,14 +37,15 @@ void loop() {
 }
 
 void handleButtonPress() {
-    if (roomOccupied) {
-        Spark.publish("room_occupied", "NOT_OCCUPIED", 60, PRIVATE);
+    digitalWrite(buttonPressLED, HIGH);
+    if (roomOccupied == 1) {
+        Particle.publish("room_occupied", "NOT_OCCUPIED", 60, PRIVATE);
         digitalWrite(roomStatusLED, LOW);
-        roomOccupied = FALSE;
+        roomOccupied = 0;
     } else {
-        Spark.publish("room_occupied", "OCCUPIED", 60, PRIVATE);
+        Particle.publish("room_occupied", "OCCUPIED", 60, PRIVATE);
         digitalWrite(roomStatusLED, HIGH);
-        roomOccupied = TRUE;
+        roomOccupied = 1;
     }
 
     digitalWrite(buttonPressLED, HIGH);
