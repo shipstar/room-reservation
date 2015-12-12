@@ -126,11 +126,16 @@ int currentNote = 0;
 int currentNoteBeatsTarget = 0;
 long currentNoteDurationTarget  = 0;
 
+String myDeviceName = "";
+
 void setup() {
     pinMode(buttonInput, INPUT);
     pinMode(buttonPressLED, OUTPUT);
     pinMode(roomStatusLED, OUTPUT);
     pinMode(speakerOut, OUTPUT);
+
+    Particle.subscribe("room_timeout", roomTimeoutHandler);
+    Particle.subscribe("spark/device/name", deviceNameHandler);
 }
 
 void loop() {
@@ -148,6 +153,21 @@ void loop() {
     previousButtonReading = currentButtonReading;
 }
 
+void deviceNameHandler(const char *event, const char *data) {
+    if (data) {
+        myDeviceName = String(data);
+        turnOnButtonPressLED();
+        Particle.publish("deviceNameHandler_called", myDeviceName, 60, PRIVATE);
+    }
+}
+
+void roomTimeoutHandler(const char *event, const char *data) {
+    // TODO: Figure out how to only respond to events targetted at my device ID
+    turnOnButtonPressLED();
+    playMelody(melodyFinalCountdown, beatsFinalCountdown, melodyFinalCountdownLength, tempoFinalCountdown);
+}
+
+
 void maybeTurnOffButtonPressLED() {
     if (buttonPressLEDState == HIGH && millis() - lastToggleTime > ledDuration) {
         buttonPressLEDState = LOW;
@@ -155,10 +175,14 @@ void maybeTurnOffButtonPressLED() {
     }
 }
 
-void handleButtonPress() {
+void turnOnButtonPressLED() {
     digitalWrite(buttonPressLED, HIGH);
     buttonPressLEDState = HIGH;
     lastToggleTime = millis();
+}
+
+void handleButtonPress() {
+    turnOnButtonPressLED();
 
     if (roomOccupied == 1) {
         Particle.publish("room_occupied", "NOT_OCCUPIED", 60, PRIVATE);
