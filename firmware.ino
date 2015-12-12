@@ -12,19 +12,18 @@ long lastToggleTime = 0;           // the last time the output pin was toggled
 long debounce = 200;  // the debounce time, increase if the output flickers
 long ledDuration = 2000;  // duration LED should stay lit after press
 
+int speakerOut = A0;
 void setup() {
-    pinMode(inPin, INPUT);    // button pin setup
-    pinMode(buttonPressLED, OUTPUT);  // led pin setup
-    pinMode(roomStatusLED, OUTPUT);  // led pin setup
+    pinMode(buttonInput, INPUT);
+    pinMode(buttonPressLED, OUTPUT);
+    pinMode(roomStatusLED, OUTPUT);
+    pinMode(speakerOut, OUTPUT);
 }
 
 void loop() {
-    currentButtonReading = digitalRead(inPin);  // read the button state
+    currentButtonReading = digitalRead(buttonInput);  // read the button state
 
-    if (buttonPressLEDState == HIGH && millis() - lastToggleTime > ledDuration) {
-        buttonPressLEDState = LOW;
-        digitalWrite(buttonPressLED, LOW);
-    }
+    maybeTurnOffButtonPressLED();
 
     if (millis() - lastToggleTime > debounce) {
         // We have waited long enough to rule out this being random power fluctuation
@@ -36,8 +35,18 @@ void loop() {
     previousButtonReading = currentButtonReading;
 }
 
+void maybeTurnOffButtonPressLED() {
+    if (buttonPressLEDState == HIGH && millis() - lastToggleTime > ledDuration) {
+        buttonPressLEDState = LOW;
+        digitalWrite(buttonPressLED, LOW);
+    }
+}
+
 void handleButtonPress() {
     digitalWrite(buttonPressLED, HIGH);
+    buttonPressLEDState = HIGH;
+    lastToggleTime = millis();
+
     if (roomOccupied == 1) {
         Particle.publish("room_occupied", "NOT_OCCUPIED", 60, PRIVATE);
         digitalWrite(roomStatusLED, LOW);
@@ -48,7 +57,4 @@ void handleButtonPress() {
         roomOccupied = 1;
     }
 
-    digitalWrite(buttonPressLED, HIGH);
-    buttonPressLEDState = HIGH;
-    lastToggleTime = millis();
 }
