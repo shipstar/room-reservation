@@ -4,11 +4,14 @@
   "description": "Reserve conference rooms on Google Calendar using a Spark Core.",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node --presets es2015 index.js"
+    "start": "babel-node --presets es2015 index.js",
+    "serve": "babel-node --presets es2015"
   },
   "author": "Kyle Shipley, Brian Murphy, and Wes Winham",
   "license": "ISC",
   "dependencies": {
+    "google-auth-library": "^0.9.7",
+    "googleapis": "^2.1.6",
     "spark": "^1.0.0"
   },
   "devDependencies": {
