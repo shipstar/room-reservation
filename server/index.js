@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.load()
+
 import spark from 'spark'
 import { startEvent, endEvent } from './gcal'
 import dataStore from './dataStore'
