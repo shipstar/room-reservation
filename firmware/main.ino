@@ -12,8 +12,13 @@ long lastToggleTime = 0;           // the last time the output pin was toggled
 long debounce = 200;  // the debounce time, increase if the output flickers
 long ledDuration = 2000;  // duration LED should stay lit after press
 
-/* Peizo buzzer notes */
+/* Piezo buzzer notes */
 // Definitions: https://www.arduino.cc/en/Tutorial/toneMelody
+#define NOTE_E3  165
+#define NOTE_F3  175
+#define NOTE_FS3 185
+#define NOTE_G3  196
+#define NOTE_GS3 208
 #define NOTE_A3  220
 #define NOTE_AS3 233
 #define NOTE_B3  247
@@ -35,31 +40,47 @@ long ledDuration = 2000;  // duration LED should stay lit after press
 #define NOTE_DS5 622
 #define NOTE_E5  659
 #define NOTE_F5  698
+#define NOTE_FS5 740
+#define NOTE_G5  784
+#define NOTE_GS5 831
 // Define a special note, 'R', to represent a rest
-#define  NOTE_R     0
+#define NOTE_R     0
 
 int speakerOut = A0;
 // MELODY and TIMING
 //  melody[] is an array of notes, accompanied by beats[],
 //  which sets each note's relative length (higher #, longer note)
-/*int melody[] = {
-    NOTE_C,
-    NOTE_b,
-    NOTE_g,
-    NOTE_C,
-    NOTE_b,
-    NOTE_e,
+// Theme from Cheers
+// Transcribed from: http://www.musicnotes.com/sheetmusic/mtd.asp?ppn=MN0018004
+int melodyCheersTheme[] = {
+    // Measure 1
+    NOTE_C5,
+    NOTE_E4,
+    NOTE_G4,
+    NOTE_C5,
+    NOTE_E5,
+    // Measure 2
+    NOTE_D5,
     NOTE_R,
-    NOTE_C,
-    NOTE_c,
-    NOTE_g,
-    NOTE_a,
-    NOTE_C
+    NOTE_D5,
+    NOTE_R
 };
-*/
-//int melodyLength = 12;
-//int beats[]  = { 16, 16, 16, 8, 8, 16, 32, 16, 16, 16, 8, 8 };
-//long tempo = 10;  // ms per "beat"
+int melodyCheersThemeLength = 9;
+int beatsCheersTheme[]  = {
+    // Measure 1
+    32,
+    8,
+    8,
+    8,
+    8,
+    // Measure 2
+    14,
+    2,
+    32,
+    16
+};
+// ms per beat. 118bpm. Whole note is 16 beats in our setup.
+long tempoCheersTheme = 31;  // ms per "beat"
 // Final countdown
 // Transcribed from: http://www.musicnotes.com/sheetmusic/mtd.asp?ppn=MN0129095
 int melodyFinalCountdown[] = {
@@ -87,10 +108,13 @@ int melodyFinalCountdown[] = {
     NOTE_C4,
     NOTE_D4,
     NOTE_C4,
-    NOTE_B4,
+    NOTE_B3,
     NOTE_D4,
+    // Measure 5
+    NOTE_C4,
+    NOTE_R
 };
-int melodyFinalCountdownLength = 22;
+int melodyFinalCountdownLength = 24;
 int beatsFinalCountdown[]  = {
     // Measure 1
     4,
@@ -117,10 +141,37 @@ int beatsFinalCountdown[]  = {
     8,
     8,
     8,
-    8
+    8,
+    // End
+    16,
+    16
 };
 // ms per beat. 118bpm. Whole note is 16 beats in our setup.
 long tempoFinalCountdown = 31;  // ms per "beat"
+
+// Windows Shutdown Song
+// G#4 D#4 G#3 A#3
+int melodyXPShutdown[] = {
+  // measure 1
+  NOTE_GS5,
+  NOTE_DS5,
+  NOTE_GS4,
+  NOTE_AS4,
+  // end
+  NOTE_R
+};
+int melodyXPShutdownLength = 5;
+int beatsXPShutdown[]  = {
+  // measure 1
+  8,
+  8,
+  8,
+  24,
+  // end
+  16
+};
+long tempoXPShutdown = 40;
+
 // Initialize core variables
 int currentNote = 0;
 int currentNoteBeatsTarget = 0;
@@ -164,11 +215,13 @@ void handleButtonPress() {
         Particle.publish("room_occupied", "NOT_OCCUPIED", 60, PRIVATE);
         digitalWrite(roomStatusLED, LOW);
         roomOccupied = 0;
+        playMelody(melodyXPShutdown, beatsXPShutdown, melodyXPShutdownLength, tempoXPShutdown);
+        // playMelody(melodyFinalCountdown, beatsFinalCountdown, melodyFinalCountdownLength, tempoFinalCountdown);
     } else {
         Particle.publish("room_occupied", "OCCUPIED", 60, PRIVATE);
         digitalWrite(roomStatusLED, HIGH);
         roomOccupied = 1;
-        playMelody(melodyFinalCountdown, beatsFinalCountdown, melodyFinalCountdownLength, tempoFinalCountdown);
+        playMelody(melodyCheersTheme, beatsCheersTheme, melodyCheersThemeLength, tempoCheersTheme);
     }
 
 }
