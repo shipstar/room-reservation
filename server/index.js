@@ -57,7 +57,7 @@ spark.on('login', () => {
 
 spark.login({ accessToken: process.env.SPARK_TOKEN })
 
-startEvent('primary', { duration: DEFAULT_DURATION }, coreId)
+// startEvent('primary', { duration: DEFAULT_DURATION }, coreId)
 // .then((eventId) => {
 //   dataStore[event.coreid] = {
 //     occupied: true,
@@ -67,9 +67,9 @@ startEvent('primary', { duration: DEFAULT_DURATION }, coreId)
 //   console.warn(err)
 // })
 
-setTimeout(
-  () => {
-    // console.log(dataStore[coreId])
-    endEvent('primary', {event: dataStore[coreId]}, coreId)
-  }
-, 5000)
+// setTimeout(
+//   () => {
+//     // console.log(dataStore[coreId])
+//     endEvent('primary', {event: dataStore[coreId]}, coreId)
+//   }
+// , 5000)
