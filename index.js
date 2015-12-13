@@ -1,24 +1,8 @@
 import spark from 'spark'
 import { startEvent, endEvent } from './gcal'
+import dataStore from './dataStore'
 
 const DEFAULT_DURATION = 15 // minutes
-
-let rooms = {
-  'abc': {
-    name: 'Conference Room ABC',
-    coreOnline: false,
-    occupied: false,
-    eventId: null,
-    googleCalendarId: 'primary'
-  },
-  'xyz': {
-    name: 'Breakout XYZ',
-    coreOnline: false,
-    occupied: false,
-    eventId: null,
-    googleCalendarId: 'primary'
-  }
-}
 
 spark.on('login', () => {
   spark.getEventStream(false, 'mine', (event) => {
@@ -27,20 +11,20 @@ spark.on('login', () => {
     switch (event.name) {
       case 'spark/status':
         if (event.data === 'online') {
-          rooms[event.coreid] = { coreOnline: true }
+          dataStore[event.coreid] = { coreOnline: true }
         } else {
           // end active events for this room
-          // rooms[event.coreid]
+          // dataStore[event.coreid]
         }
         break;
 
       case 'room_occupied':
         if (event.data === 'OCCUPIED') {
-          const { googleCalendarId } = rooms[event.coreid]
+          const { googleCalendarId } = dataStore[event.coreid]
 
           startEvent(googleCalendarId, { duration: DEFAULT_DURATION })
           .then((eventId) => {
-            rooms[event.coreid] = {
+            dataStore[event.coreid] = {
               occupied: true,
               eventId
             }
@@ -48,11 +32,11 @@ spark.on('login', () => {
             console.warn(eventId)
           })
         } else if (event.data === 'NOT OCCUPIED') {
-          const { googleCalendarId, eventId } = rooms[event.coreid]
+          const { googleCalendarId, eventId } = dataStore[event.coreid]
 
           endEvent(googleCalendarId, { eventId })
           .then(() => {
-            rooms[event.coreid] = {
+            dataStore[event.coreid] = {
               occupied: false,
               eventId: null
             }
@@ -72,7 +56,7 @@ spark.on('login', () => {
 
 startEvent('primary', { duration: DEFAULT_DURATION })
 // .then((eventId) => {
-//   rooms[event.coreid] = {
+//   dataStore[event.coreid] = {
 //     occupied: true,
 //     eventId
 //   }

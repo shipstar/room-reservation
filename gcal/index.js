@@ -3,6 +3,8 @@ import loadSecret from './authorize'
 import moment from 'moment'
 import _ from 'lodash'
 
+import dataStore from '../dataStore'
+
 function postEvents(duration, auth) {
   // Refer to the Node.js quickstart on how to setup the environment:
   // https://developers.google.com/google-apps/calendar/quickstart/node
@@ -11,6 +13,8 @@ function postEvents(duration, auth) {
   var calendar = google.calendar('v3');
   var conferenceRoomName = 'Test Room';
   const now = moment()
+  var coreId = 'abc'
+
   var event = {
     'summary': 'Room In Use',
     'location': conferenceRoomName,
@@ -37,12 +41,18 @@ function postEvents(duration, auth) {
       return;
     }
     console.log('Event created: %s', eventRsp.id);
+    // console.log(eventRsp)
+    dataStore[coreId].coreOnline = true
+    dataStore[coreId].occupied = true
+    dataStore[coreId].eventID = eventRsp.id
+    dataStore[coreId].eventRsp = eventRsp
+    console.log(dataStore[coreId])
 
     // move to updateEvents function
     var event2 = eventRsp
     event2.end.dateTime = now.format()
 
-    console.log(event2)
+    return
 
     calendar.events.update({
       auth: auth,
