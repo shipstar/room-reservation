@@ -1,12 +1,15 @@
 export default {
-  'abc': {
+  // Sparkamus-Prime
+  '54ff6f066672524845361167': {
     name: 'Conference Room ABC',
     coreOnline: false,
     occupied: false,
     eventId: null,
     googleCalendarId: 'primary'
   },
-  'xyz': {
+
+  // Westacular
+  '53ff6b066667574832382467': {
     name: 'Breakout XYZ',
     coreOnline: false,
     occupied: false,
