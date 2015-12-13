@@ -5,9 +5,6 @@ import spark from 'spark'
 import { startEvent, endEvent } from './gcal'
 import dataStore from './dataStore'
 
-const DEFAULT_DURATION = 15 // minutes
-var coreId = 'abc'
-
 spark.on('login', () => {
   spark.getEventStream(false, 'mine', (event) => {
     console.log("Event: ", JSON.stringify(event))
@@ -49,27 +46,10 @@ spark.on('login', () => {
         break
 
       default:
-        console.log(`Unknown event type: ${event}`)
+        console.log(`Unhandled event type: ${event.name}`)
         break
     }
   })
 })
 
 spark.login({ accessToken: process.env.SPARK_TOKEN })
-
-// startEvent('primary', { duration: DEFAULT_DURATION }, coreId)
-// .then((eventId) => {
-//   dataStore[event.coreid] = {
-//     occupied: true,
-//     eventId
-//   }
-// }).catch((err) => {
-//   console.warn(err)
-// })
-
-// setTimeout(
-//   () => {
-//     // console.log(dataStore[coreId])
-//     endEvent('primary', {event: dataStore[coreId]}, coreId)
-//   }
-// , 5000)
