@@ -40,8 +40,6 @@ function postEvents(calendarId, duration, coreId, auth) {
       return;
     }
     console.log('Event created: %s', eventRsp.id);
-    dataStore[coreId].coreOnline = true
-    dataStore[coreId].occupied = true
     dataStore[coreId].eventId = eventRsp.id
     dataStore[coreId].eventRsp = eventRsp
   });
@@ -66,10 +64,6 @@ function stopEvents(calendarId, event, coreId, auth) {
       console.log('There was an error contacting the Calendar service: ' + err);
       return;
     }
-    dataStore[coreId].coreOnline = true
-    dataStore[coreId].occupied = false
-    dataStore[coreId].eventId = null
-    dataStore[coreId].eventRsp = null
   });
 }
 

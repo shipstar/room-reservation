@@ -5,6 +5,8 @@ import spark from 'spark'
 import { startEvent, endEvent } from './gcal'
 import dataStore from './dataStore'
 
+const DEFAULT_DURATION = 15 // minutes
+
 spark.on('login', () => {
   spark.getEventStream(false, 'mine', (event) => {
     console.log("Event: ", JSON.stringify(event))
@@ -20,26 +22,26 @@ spark.on('login', () => {
         break;
 
       case 'room_occupied':
+        const googleCalendarId = dataStore[event.coreid].googleCalendarId
         if (event.data === 'OCCUPIED') {
-          const { googleCalendarId } = dataStore[event.coreid]
 
-          startEvent(googleCalendarId, { duration: DEFAULT_DURATION })
+          // console.log(event.coreid, googleCalendarId)
+          startEvent(googleCalendarId, { duration: DEFAULT_DURATION },
+              event.coreid)
           .then((eventId) => {
             dataStore[event.coreid] = {
-              occupied: true,
-              eventId
+              occupied: true
             }
-
-            console.warn(eventId)
           })
-        } else if (event.data === 'NOT OCCUPIED') {
-          const { googleCalendarId, eventId } = dataStore[event.coreid]
+        } else if (event.data === 'NOT_OCCUPIED') {
+          // const { googleCalendarId, eventId } = dataStore[event.coreid]
 
-          endEvent(googleCalendarId, { eventId })
+          endEvent(googleCalendarId, { event: dataStore[event.coreid] }, event.coreid)
           .then(() => {
             dataStore[event.coreid] = {
               occupied: false,
-              eventId: null
+              eventId: null,
+              eventRsp: null
             }
           })
         }
