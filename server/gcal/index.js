@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 import dataStore from '../dataStore'
 
-function postEvents(calendarId, duration, auth) {
+function postEvents(calendarId, duration, coreId, auth) {
   // Refer to the Node.js quickstart on how to setup the environment:
   // https://developers.google.com/google-apps/calendar/quickstart/node
   // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
@@ -13,7 +13,6 @@ function postEvents(calendarId, duration, auth) {
   var calendar = google.calendar('v3');
   var conferenceRoomName = 'Test Room';
   const now = moment()
-  var coreId = 'abc'
 
   var event = {
     'summary': 'Room In Use',
@@ -48,12 +47,11 @@ function postEvents(calendarId, duration, auth) {
   });
 }
 
-function stopEvents(calendarId, event, auth) {
+function stopEvents(calendarId, event, coreId, auth) {
   // Changes the end dateTime of a Gcal event to the current time.
   var calendar = google.calendar('v3');
   // var conferenceRoomName = 'Test Room';
   const now = moment()
-  var coreId = 'abc'
 
   event.eventRsp.end.dateTime = now.format()
   event.eventRsp.description = 'Event is over.'
@@ -75,11 +73,11 @@ function stopEvents(calendarId, event, auth) {
   });
 }
 
-function startEvent(googleCalendarId, { duration }) {
+function startEvent(googleCalendarId, { duration }, coreId) {
   console.log('starting event for ', googleCalendarId, duration)
 
   return new Promise((resolve, reject) => {
-    const resp = loadSecret(_.partial(postEvents, googleCalendarId, duration))
+    const resp = loadSecret(_.partial(postEvents, googleCalendarId, duration, coreId))
     // console.log(resp)
     // resolve(resp)
     // console.warn('resolving')
@@ -87,11 +85,11 @@ function startEvent(googleCalendarId, { duration }) {
   })
 }
 
-function endEvent(googleCalendarId, { event }) {
+function endEvent(googleCalendarId, { event }, coreId) {
   console.log('ending event for: ', googleCalendarId, event.eventId)
 
   return new Promise((resolve, reject) => {
-    const resp = loadSecret(_.partial(stopEvents, googleCalendarId, event))
+    const resp = loadSecret(_.partial(stopEvents, googleCalendarId, event, coreId))
     // console.log(resp)
     // resolve(resp)
     // console.warn('resolving')

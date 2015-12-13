@@ -3,6 +3,7 @@ import { startEvent, endEvent } from './gcal'
 import dataStore from './dataStore'
 
 const DEFAULT_DURATION = 15 // minutes
+var coreId = 'abc'
 
 spark.on('login', () => {
   spark.getEventStream(false, 'mine', (event) => {
@@ -51,11 +52,9 @@ spark.on('login', () => {
   })
 })
 
-// spark.login({ accessToken: process.env.SPARK_TOKEN })
+spark.login({ accessToken: process.env.SPARK_TOKEN })
 
-var coreId = 'abc'
-
-startEvent('primary', { duration: DEFAULT_DURATION })
+startEvent('primary', { duration: DEFAULT_DURATION }, coreId)
 // .then((eventId) => {
 //   dataStore[event.coreid] = {
 //     occupied: true,
@@ -68,6 +67,6 @@ startEvent('primary', { duration: DEFAULT_DURATION })
 setTimeout(
   () => {
     // console.log(dataStore[coreId])
-    endEvent('primary', {event: dataStore[coreId]})
+    endEvent('primary', {event: dataStore[coreId]}, coreId)
   }
 , 5000)
