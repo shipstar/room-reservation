@@ -14,5 +14,3 @@ export default {
     googleCalendarId: 'primary'
   }
 }
-
-// dataStore[event.coreid].coreOnline = false
