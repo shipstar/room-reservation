@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.load()
+
 import spark from 'spark'
 import { startEvent, endEvent } from './gcal'
 import dataStore from './dataStore'
@@ -51,11 +54,11 @@ spark.on('login', () => {
   })
 })
 
-// spark.login({ accessToken: process.env.SPARK_TOKEN })
+spark.login({ accessToken: process.env.SPARK_TOKEN })
 
 var coreId = 'abc'
 
-startEvent('primary', { duration: DEFAULT_DURATION })
+// startEvent('primary', { duration: DEFAULT_DURATION })
 // .then((eventId) => {
 //   dataStore[event.coreid] = {
 //     occupied: true,
